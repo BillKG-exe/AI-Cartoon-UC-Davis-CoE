@@ -1,0 +1,85 @@
+.sidebar {
+    height: 100vh;
+    padding: 15px;
+    padding-top: 25px;
+    color: white;
+    background: #022851;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-title {
+    color: #FFBF00;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.sidebar-new-chat {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar-new-chat-text {
+    font-size: .85rem;
+    font-weight: 600;
+    margin: 5px;
+}
+
+.sidebar-new-chat-icon {
+    color: #022851;
+    width: 35px;
+    height: 35px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #F5F7FA;
+}
+
+.sidebar-new-chat:hover > .sidebar-new-chat-text {
+    color: #FFBF00;
+    transition-duration: .2s;
+}
+
+.sidebar-new-chat:hover > .sidebar-new-chat-icon {
+    background-color: #FFBF00;
+    transition-duration: .2s;
+}
+
+.side-history {
+    margin-top: 15px;
+}
+
+.history-text {
+    cursor: pointer;
+    margin: 3px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.history-prompt {
+    width: calc(100% - 40px);
+    font-size: .9rem;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+.history-prompt:hover {
+    color: #FFBF00;
+    transition-duration: .2s;
+}
+
+.prompt-del-icon:hover {
+    color: #F93549;
+    transition-duration: .2s;  
+}

@@ -1,0 +1,22 @@
+.message-box-name {
+    color: #022851;
+    font-weight: 600;
+}
+
+.images-display {
+    margin: 25px 0;
+}
+
+.image-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.image-list > div > img {
+    cursor: pointer;
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+}
