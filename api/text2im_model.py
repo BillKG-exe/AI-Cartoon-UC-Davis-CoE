@@ -52,7 +52,7 @@ class BaseModel:
         self.model.to(self.device)
         print('total base parameters', sum(x.numel() for x in self.model.parameters()))
 
-    def generate(self, prompt, img_name):
+    def generate(self, prompt, img_name=''):
         tokens = self.model.tokenizer.encode(prompt)
 
         tokens, mask = self.model.tokenizer.padded_tokens_and_mask(
@@ -97,7 +97,83 @@ class BaseModel:
             cond_fn=None,
         )[:self.batch_size]
 
-        self.download_images(samples, './Generated/', img_name)
+        # self.download_images(samples, './Generated/', img_name)
+
+        return samples, self.options, self.device, self.has_cuda
+
+    def download_images(self, batch: th.Tensor, directory: str, name: str):
+        os.makedirs(directory, exist_ok=True)
+        for i, image_tensor in enumerate(batch):
+            scaled = ((image_tensor + 1) * 127.5).round().clamp(0, 255).to(th.uint8).cpu()
+            reshaped = scaled.permute(1, 2, 0).numpy()
+
+            filename = os.path.join(directory, f"{name}_{i}.jpg")
+            Image.fromarray(reshaped).save(filename)
+
+class UpSamplerModel:
+    def __init__(self, model_path, options, device, has_cuda, batch):
+        self.batch_size = batch
+        self.device = device
+
+
+        self.options_up = model_and_diffusion_defaults_upsampler()
+        self.options_up['use_fp16'] = has_cuda
+        self.options_up['timestep_respacing'] = 'fast27' # use 27 diffusion steps for very fast sampling
+
+        if len(model_path) > 0:
+            assert os.path.exists(
+                model_path
+            ), f"Failed to resume from {model_path}, file does not exist."
+            weights = th.load(model_path, map_location="cpu")
+            self.model_up, self.diffusion_up = create_model_and_diffusion(**self.options_up)
+            self.model_up.load_state_dict(weights)
+            print(f"Resumed from {model_path} successfully.")
+        else:
+            self.model_up, self.diffusion_up = create_model_and_diffusion(**options)
+            self.model_up.load_state_dict(load_checkpoint("upsample", device))
+
+        if has_cuda:
+            self.model_up.convert_to_fp16()
+        self.model_up.to(device)
+
+    def generate(self, samples, img_name, upsample_temp=1):
+        tokens = self.model_up.tokenizer.encode('gunrock')
+        tokens, mask = self.model_up.tokenizer.padded_tokens_and_mask(
+            tokens, self.options_up['text_ctx']
+        )
+
+        # Create the model conditioning dict.
+        model_kwargs = dict(
+            # Low-res image to upsample.
+            low_res=((samples+1)*127.5).round()/127.5 - 1,
+
+            # Text tokens
+            tokens=th.tensor(
+                [tokens] * self.batch_size, device=self.device
+            ),
+            mask=th.tensor(
+                [mask] * self.batch_size,
+                dtype=th.bool,
+                device=self.device,
+            ),
+        )
+
+        # Sample from the base model.
+        self.model_up.del_cache()
+        up_shape = (self.batch_size, 3, self.options_up["image_size"], self.options_up["image_size"])
+        up_samples = self.diffusion_up.plms_sample_loop(
+            self.model_up,
+            up_shape,
+            noise=th.randn(up_shape, device=self.device) * upsample_temp,
+            device=self.device,
+            clip_denoised=True,
+            progress=True,
+            model_kwargs=model_kwargs,
+            cond_fn=None,
+        )[:self.batch_size]
+        self.model_up.del_cache()
+
+        self.download_images(up_samples, './Generated/', img_name)
 
     def download_images(self, batch: th.Tensor, directory: str, name: str):
         os.makedirs(directory, exist_ok=True)

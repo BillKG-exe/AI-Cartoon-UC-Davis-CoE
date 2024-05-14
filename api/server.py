@@ -7,14 +7,14 @@ import json
 
 import os
 
-from text2im_model import BaseModel
+from text2im_model import BaseModel, UpSamplerModel
 from style_transfer.test import TransferStyle
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])  # This enables CORS for all routes in your app
 
 
-SOURCE = f"C:\\Users\\ouatt\\Desktop\\AI Cartoon\\api\\generated"
+SOURCE = f"C:\\Users\\ouatt\\Desktop\\School work\\Spring 2024 Quarter\\Senior Design\\AI Cartoon\\api\\generated"
 DESTINATION = r"C:\Users\ouatt\Desktop\AI Cartoon\api\results"
 
 
@@ -34,7 +34,11 @@ def sendImage():
     batch_size = 2
 
     text2im_model = BaseModel(model_path=glide_model_path, batch=batch_size)
-    text2im_model.generate(prompt, str(prompt_id))
+    samples, options, device, has_cuda = text2im_model.generate(prompt, str(prompt_id))
+
+    upsampler_model = UpSamplerModel(f"C:\\Users\\ouatt\\Desktop\\glide-finetuned-8.pt", options, device, has_cuda, batch_size)
+    upsampler_model.generate(samples=samples, img_name=str(prompt_id))
+
 
     # Generating data to write or append to corresponding history
     imgs = []
