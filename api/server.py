@@ -53,7 +53,7 @@ def sendImage():
     for img in imgs:
         style_transfer_model.transfer_style(145, f'{SOURCE}\\{img}', SOURCE)
 
-        #style_transfer_model.transfer_style(160, f'{SOURCE}\\{img}',
+        #style_transfer_model.transfer_ tyle(160, f'{SOURCE}\\{img}',
         #SOURCE)
 
     # Append the applied style filenames to the imgs array
