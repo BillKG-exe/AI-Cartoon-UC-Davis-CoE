@@ -1,8 +1,14 @@
 import React from 'react';
 import './message.css';
 
+import { useState } from 'react';
+
+import { FaEdit } from "react-icons/fa";
 
 function Message({ id, name, text, images }) {
+    const [mustEdit, setMustEdit] = useState(false);
+    const [editedText, setEditedText] = useState(text);
+
     const downloadImage = (imageUrl, fileName) => {
         // Create an anchor element
         const link = document.createElement('a');
@@ -18,11 +24,39 @@ function Message({ id, name, text, images }) {
         document.body.removeChild(link);
       };
 
+    const handleEdit = e => {
+        setEditedText(e.target.value);
+    }
+
+    const handleSend = e => {
+        setMustEdit(false);
+
+        // Do an edit send request to stop current thread and run the new one
+    }
 
   return (
     <div className='message-box'>
         <div className='message-box-name'>{name}</div>
-        <div className='message-box-text'>{text}</div>
+        {
+            !mustEdit? (
+                <div className='message-box-text'>{editedText}</div>
+            ) : (
+                <div className='edit-box'>
+                    <input type="text" onChange={handleEdit} value={editedText}/>
+                    <div className='edit-buttons'>
+                        <div className='edit-cancel-btn' onClick={handleSend}>cancel</div>
+                        <div className='edit-submit-btn' onClick={handleSend}>Send</div>
+                    </div>
+                </div>
+            )
+        }
+        {
+            (!images && !mustEdit) && (
+                <div className='message-box-edit'>
+                    <FaEdit onClick={() => setMustEdit(true)} />
+                </div>
+            ) 
+        }
         <div className='images-display'>
             {
                 images !== null && (

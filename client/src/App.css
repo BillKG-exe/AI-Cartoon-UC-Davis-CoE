@@ -1,3 +1,7 @@
+.App {
+  background: #F5F7FA;
+}
+
 .App > main {
   width: 100vw;
   height: 100vh;
@@ -83,3 +87,38 @@
   background: #FFBF00;
   box-shadow: rgba(255, 191, 0, 0.16) 0px 3px 6px, rgba(255, 191, 0, 0.23) 0px 3px 6px;
 }
+
+@media only screen and (max-width: 1226px) {
+  .chat-display {
+    width: 95%;
+  }
+
+  .app-sidebar {
+    width: 265px;
+  }
+  
+  .dialog-screen {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 1025px) {
+  .input-box {
+    left: 0;
+    width: 100%;
+    display: block;
+    padding-left: 275px;
+  }
+}
+
+@media only screen and (max-width: 940px) {
+  .input-box {
+    padding-left: 265px;
+  }
+
+  .input-box > div {
+    width: calc(100% - 15px);
+  }
+}
+
+

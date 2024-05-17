@@ -31,7 +31,7 @@ def sendImage():
     # Generating the images from glide
     glide_model_path = 'C:\\Users\\ouatt\\Desktop\\glide-finetuned-43.pt'
     
-    batch_size = 2
+    batch_size = 5
 
     text2im_model = BaseModel(model_path=glide_model_path, batch=batch_size)
     samples, options, device, has_cuda = text2im_model.generate(prompt, str(prompt_id))
