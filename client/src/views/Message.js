@@ -42,10 +42,10 @@ function Message({ id, name, text, images }) {
                 <div className='message-box-text'>{editedText}</div>
             ) : (
                 <div className='edit-box'>
-                    <input type="text" onChange={handleEdit} value={editedText}/>
+                    <input type="text" data-testid='edit-box' onChange={handleEdit} value={editedText}/>
                     <div className='edit-buttons'>
-                        <div className='edit-cancel-btn' onClick={handleSend}>cancel</div>
-                        <div className='edit-submit-btn' onClick={handleSend}>Send</div>
+                        <div className='edit-cancel-btn' data-testid='edit-cancel-btn' onClick={handleSend}>cancel</div>
+                        <div className='edit-submit-btn' data-testid='edit-submit-btn' onClick={handleSend}>Send</div>
                     </div>
                 </div>
             )
@@ -53,7 +53,7 @@ function Message({ id, name, text, images }) {
         {
             (!images && !mustEdit) && (
                 <div className='message-box-edit'>
-                    <FaEdit onClick={() => setMustEdit(true)} />
+                    <FaEdit data-testid='edit-icon' onClick={() => setMustEdit(true)} />
                 </div>
             ) 
         }
