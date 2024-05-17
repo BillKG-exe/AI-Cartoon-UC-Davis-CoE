@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])  # This enables CORS for all routes in your app
 
 
-SOURCE = f"C:\\Users\\ouatt\\Desktop\\School work\\Spring 2024 Quarter\\Senior Design\\AI Cartoon\\api\\generated"
+SOURCE = f"api/generated"
 DESTINATION = r"C:\Users\ouatt\Desktop\AI Cartoon\api\results"
 
 
