@@ -141,7 +141,7 @@ function App() {
                   value={prompt}
                 />
               </div>
-              <div className='send-button' onClick={sendPrompt}>
+              <div className='send-button' onClick={sendPrompt} data-testid='send-button'>
                 <TbSend2 />
               </div>
             </div>
