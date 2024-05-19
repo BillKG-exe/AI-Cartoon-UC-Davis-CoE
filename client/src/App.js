@@ -2,7 +2,7 @@ import './App.css';
 import Sidebar from './views/Sidebar';
 import Message from './views/Message';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
 
 import { TbSend2 } from "react-icons/tb";
@@ -14,7 +14,8 @@ function App() {
   const [isChatOpened, setIsChatOpened] = useState(false);
   const [prompt, setPrompt] = useState('');
   const [promptHistory, setPromptHistory] = useState([]);
-
+  //const [intervalId, setIntervalId] = useState(null)
+  const intervalIdRef = useRef(null);
 
   const setUserPrompt = e => {
     setPrompt(e.target.value);
@@ -39,29 +40,62 @@ function App() {
       id: timeId,
       isChatOpened: isChatOpened,
       chat_id: !isChatOpened? timeId : chatID,
-      prompt: prompt
+      prompt: prompt,
+      isEdit: false
     }
     
     axios.post('http://127.0.0.1:5000/api/generate', data)
       .then(
         response => {   
-          const res = {
-            id: timeId,
-            prompt: "The following images were generated based on your prompt",
-            imgs: response.data.images
-          }
-
-          setPromptHistory([...promptHistory, res])
+          console.log("Generate: ", response.data)
+          
+          const interv_id = setInterval(() => checkImagesLoadingStatus(timeId), 1000);
+          //setIntervalId(interv_id);
+          intervalIdRef.current = interv_id;
         })
       .catch(error => {
           console.error('Error: ', error);
       })
 
-    //window.scrollTo(0, document.body.scrollHeight)
-    //console.log(document.body.scrollHeight)
+    const dialogScreen = document.querySelector('.dialog-screen');
+    dialogScreen.scrollTo(0, dialogScreen.scrollHeight);
+
+      //window.scrollTo(0, document.body.scrollHeight)
+      //console.log(document.body.scrollHeight)
 
     setPrompt('');
     setIsChatOpened(true);
+  }
+
+  const checkImagesLoadingStatus = (prompt_id) => {
+    const data = { id: prompt_id }
+
+    axios.post('http://127.0.0.1:5000/api/checkStatus', data)
+    .then(
+      response => {
+        console.log("status: ", response.data.status);
+        // console.log("images: ", response.data.images);
+      
+        if(response.data.status === -1) {
+          clearInterval(intervalIdRef.current);
+          return;
+        }
+
+        if(response.data.images.length > 0) {
+          const res = {
+            id: prompt_id,
+            prompt: "The following images were generated based on your prompt",
+            imgs: response.data.images
+          }
+          
+          console.log("setting prompt history...");
+          setPromptHistory([...promptHistory, res]);
+          clearInterval(intervalIdRef.current);
+        }   
+      })
+    .catch(error => {
+        console.error('Error: ', error);
+    })
   }
 
   const handleKeyPress = e => {
@@ -110,6 +144,11 @@ function App() {
     setPromptHistory([])
   }
 
+  const updatePrompt = (res, index) => {
+    promptHistory[index] = res;
+    setPromptHistory([...promptHistory]);
+  }
+
   return (
     <div className="App">
       <main>
@@ -126,6 +165,10 @@ function App() {
                     name={index % 2 === 0? "Alison" : "Bot"} 
                     text={hist.prompt} 
                     images={hist.imgs}
+                    index={index}
+                    isChatOpened={isChatOpened}
+                    chat_id={chatID}
+                    updatePrompt={updatePrompt}
                   />
                 </div>
               ))
