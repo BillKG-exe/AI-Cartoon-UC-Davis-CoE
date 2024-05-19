@@ -24,7 +24,7 @@ prompt_task_id = {}
 # Set the start method to 'spawn'
 multiprocessing.set_start_method('spawn', force=True)
 
-SOURCE = f"C:\\Users\\ouatt\\Desktop\\School work\\Spring 2024 Quarter\\Senior Design\\AI Cartoon\\api\\generated"
+SOURCE = f"api/generated"
 DESTINATION = r"C:\Users\ouatt\Desktop\AI Cartoon\api\results"
 
 
