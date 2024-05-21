@@ -178,7 +178,7 @@ class BaseModel:
         # samples = samples.detach().cpu().numpy()
         # print("Putting samples into the queue...")
 
-        upsampler_model = UpSamplerModel(f"C:\\Users\\ouatt\\Desktop\\glide-finetuned-8.pt", self.options, self.device, self.has_cuda, self.batch_size)
+        upsampler_model = UpSamplerModel(f"api/glide-finetuned-8.pt", self.options, self.device, self.has_cuda, self.batch_size)
         upsampler_model.generate(samples=samples, img_name=img_name)
 
         task_result_queue.put('done... ')

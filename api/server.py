@@ -25,7 +25,7 @@ prompt_task_id = {}
 multiprocessing.set_start_method('spawn', force=True)
 
 SOURCE = f"api/generated"
-DESTINATION = r"C:\Users\ouatt\Desktop\AI Cartoon\api\results"
+DESTINATION = r"api/results"
 
 
 @app.route('/api/generate', methods=['POST'])
@@ -56,7 +56,7 @@ def sendImage():
             del prompt_task_id[f"{str(prompt_id)}"]
 
     # Generating the images from glide
-    glide_model_path = 'C:\\Users\\ouatt\\Desktop\\glide-finetuned-43.pt'
+    glide_model_path = 'api/glide-finetuned-8.pt'
     
     batch_size = 1
 
@@ -132,15 +132,15 @@ def checkImageGenerationStatus():
     
 
     try:
-        with open(f'./history/{task["chat_id"]}.json', "r") as json_file:
+        with open(f'api/history/{task["chat_id"]}.json', "r") as json_file:
             existing_data = json.load(json_file)
 
         existing_data.update(hist)
 
-        with open(f'./history/{task["chat_id"]}.json', "w") as json_file:
+        with open(f'api/history/{task["chat_id"]}.json', "w") as json_file:
             json.dump(existing_data, json_file, indent=4) 
     except FileNotFoundError:
-        with open(f'./history/{task["chat_id"]}.json', "w") as json_file:
+        with open(f'api/history/{task["chat_id"]}.json', "w") as json_file:
             json.dump(hist, json_file, indent=4) 
 
 
@@ -151,7 +151,7 @@ def checkImageGenerationStatus():
     generated_images = []
 
     for i in range(len(imgs)):
-        image = cv2.imread(f'./generated/{imgs[i]}')
+        image = cv2.imread(f'api/generated/{imgs[i]}')
 
         # Encode image data to Base64 string
         _, buffer = cv2.imencode('.jpg', image)
@@ -168,12 +168,12 @@ def checkImageGenerationStatus():
 @app.route('/api/promptHistory', methods=['GET'])
 def sendPromptHistory():
 
-    history = os.listdir('./history')
+    history = os.listdir('api/history')
 
     data = []
 
     for file in history:
-        with open(f'./history/{file}', "r") as json_file:
+        with open(f'api/history/{file}', "r") as json_file:
             existing_data = json.load(json_file) 
 
             prompt_id = file.split('.')[0]
@@ -196,7 +196,7 @@ def sendPromptHistory():
 def loadChatId():
     prompt_id = request.json['id']
 
-    with open(f'./history/{prompt_id}.json', "r") as json_file:
+    with open(f'api/history/{prompt_id}.json', "r") as json_file:
         existing_data = json.load(json_file) 
 
 
@@ -204,7 +204,7 @@ def loadChatId():
         imgs = data['images']
 
         for index, im in enumerate(imgs):
-            image = cv2.imread(f'./generated/{im}')
+            image = cv2.imread(f'api/generated/{im}')
 
             # Encode image data to Base64 string
             _, buffer = cv2.imencode('.jpg', image)
@@ -224,12 +224,12 @@ def loadChatId():
 def delete_chat():
     chatID = request.json['id']
 
-    history = os.listdir('./history')
+    history = os.listdir('api/history')
 
     try:
         for file in history:
             if file.split('.')[0] == chatID:
-                with open(f'./history/{file}', "r") as json_file:
+                with open(f'api/history/{file}', "r") as json_file:
                     existing_data = json.load(json_file) 
 
                     for _, data in existing_data.items():
@@ -238,7 +238,7 @@ def delete_chat():
                         for img in imgs:
                             os.remove(f'./generated/{img}')
 
-        os.remove(f'./history/{chatID}.json')
+        os.remove(f'api/history/{chatID}.json')
         success = True
     except OSError:
         success = False
