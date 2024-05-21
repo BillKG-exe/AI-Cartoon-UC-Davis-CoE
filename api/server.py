@@ -25,7 +25,7 @@ prompt_task_id = {}
 multiprocessing.set_start_method('spawn', force=True)
 
 SOURCE = f"api/generated"
-DESTINATION = r"C:\Users\ouatt\Desktop\AI Cartoon\api\results"
+DESTINATION = r"api/results"
 
 
 @app.route('/api/generate', methods=['POST'])
@@ -56,7 +56,7 @@ def sendImage():
             del prompt_task_id[f"{str(prompt_id)}"]
 
     # Generating the images from glide
-    glide_model_path = 'C:\\Users\\ouatt\\Desktop\\glide-finetuned-43.pt'
+    glide_model_path = 'api/glide-finetuned-43.pt'
     
     batch_size = 1
 
