@@ -24,8 +24,12 @@ prompt_task_id = {}
 # Set the start method to 'spawn'
 multiprocessing.set_start_method('spawn', force=True)
 
+<<<<<<< Updated upstream
 SOURCE = f"api/generated"
 DESTINATION = r"api/results"
+=======
+SOURCE = f"../generated/"
+>>>>>>> Stashed changes
 
 
 @app.route('/api/generate', methods=['POST'])
@@ -56,7 +60,11 @@ def sendImage():
             del prompt_task_id[f"{str(prompt_id)}"]
 
     # Generating the images from glide
+<<<<<<< Updated upstream
     glide_model_path = 'api/glide-finetuned-8.pt'
+=======
+    glide_model_path = 'C:\\Users\\ouatt\\Desktop\\glide-finetuned-170.pt'
+>>>>>>> Stashed changes
     
     batch_size = 1
 
@@ -111,7 +119,7 @@ def checkImageGenerationStatus():
     style_transfer_model = TransferStyle()
     
     for img in imgs:
-        style_transfer_model.transfer_style(145, f'{SOURCE}\\{img}', SOURCE)
+        style_transfer_model.transfer_style(145, f'{SOURCE}{img}', SOURCE)
         #style_transfer_model.transfer_ tyle(160, f'{SOURCE}\\{img}', SOURCE)
 
     # Append the applied style filenames to the imgs array
