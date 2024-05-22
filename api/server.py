@@ -61,7 +61,7 @@ def sendImage():
     # Generating the images from glide
     glide_model_path = os.path.join(os.getcwd(), 'glide-finetuned-170.pt')
     
-    batch_size = 1
+    batch_size = 6
 
     text2im_model = BaseModel(model_path=glide_model_path, batch=batch_size)
 

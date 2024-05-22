@@ -3,6 +3,10 @@ import os
 #from util import util
 import torch
 
+
+style_tranfer_model_path = os.path.join(os.getcwd(), 'style_transfer')
+style_tranfer_model_path = os.path.join(style_tranfer_model_path, 'checkpoints')
+
 class Options():
     def __init__(self):
         self.parser = argparse.ArgumentParser()
@@ -11,7 +15,7 @@ class Options():
 
     def initialize(self):
         self.parser.add_argument('--name', type=str, default='train', help='name of the experiment. It decides where to store samples and models')
-        self.parser.add_argument('--checkpoints_dir', type=str, default=f'api/style_transfer/checkpoints', help='models are saved here')
+        self.parser.add_argument('--checkpoints_dir', type=str, default=style_tranfer_model_path, help='models are saved here')
 
         self.parser.add_argument('--dataroot', type=str, default='', help='path to images (should have subfolders train0, train1_stylename, train2_stylename, ..., edge1_stylename, edge2_stylename, ..., test)')
         self.parser.add_argument('--vgg_pretrained_mode', type=str, default='./vgg19.pth', help='path to the pretrained vgg model')
