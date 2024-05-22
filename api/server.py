@@ -24,12 +24,11 @@ prompt_task_id = {}
 # Set the start method to 'spawn'
 multiprocessing.set_start_method('spawn', force=True)
 
-<<<<<<< Updated upstream
 SOURCE = f"api/generated"
 DESTINATION = r"api/results"
-=======
-SOURCE = f"../generated/"
->>>>>>> Stashed changes
+
+GENERATED_PATH = os.path.join(os.getcwd(), 'generated')
+HISTORY_PATH = os.path.join(os.getcwd(), 'history') 
 
 
 @app.route('/api/generate', methods=['POST'])
@@ -60,11 +59,7 @@ def sendImage():
             del prompt_task_id[f"{str(prompt_id)}"]
 
     # Generating the images from glide
-<<<<<<< Updated upstream
-    glide_model_path = 'api/glide-finetuned-8.pt'
-=======
-    glide_model_path = 'C:\\Users\\ouatt\\Desktop\\glide-finetuned-170.pt'
->>>>>>> Stashed changes
+    glide_model_path = os.path.join(os.getcwd(), 'glide-finetuned-170.pt')
     
     batch_size = 1
 
@@ -119,8 +114,8 @@ def checkImageGenerationStatus():
     style_transfer_model = TransferStyle()
     
     for img in imgs:
-        style_transfer_model.transfer_style(145, f'{SOURCE}{img}', SOURCE)
-        #style_transfer_model.transfer_ tyle(160, f'{SOURCE}\\{img}', SOURCE)
+        path_to_img = os.path.join(GENERATED_PATH, img)
+        style_transfer_model.transfer_style(145, path_to_img, GENERATED_PATH)
 
     # Append the applied style filenames to the imgs array
     for i in range(task['batch_size']):
@@ -138,17 +133,18 @@ def checkImageGenerationStatus():
         str(prompt_id): data
     }
     
+    chat_path = os.path.join(HISTORY_PATH, f"{task['chat_id']}.json")
 
     try:
-        with open(f'api/history/{task["chat_id"]}.json', "r") as json_file:
+        with open(chat_path, "r") as json_file:
             existing_data = json.load(json_file)
 
         existing_data.update(hist)
 
-        with open(f'api/history/{task["chat_id"]}.json', "w") as json_file:
+        with open(chat_path, "w") as json_file:
             json.dump(existing_data, json_file, indent=4) 
     except FileNotFoundError:
-        with open(f'api/history/{task["chat_id"]}.json', "w") as json_file:
+        with open(chat_path, "w") as json_file:
             json.dump(hist, json_file, indent=4) 
 
 
@@ -159,7 +155,8 @@ def checkImageGenerationStatus():
     generated_images = []
 
     for i in range(len(imgs)):
-        image = cv2.imread(f'api/generated/{imgs[i]}')
+        generated_img_path = os.path.join(GENERATED_PATH, imgs[i])
+        image = cv2.imread(generated_img_path)
 
         # Encode image data to Base64 string
         _, buffer = cv2.imencode('.jpg', image)
@@ -176,12 +173,14 @@ def checkImageGenerationStatus():
 @app.route('/api/promptHistory', methods=['GET'])
 def sendPromptHistory():
 
-    history = os.listdir('api/history')
+    history = os.listdir(HISTORY_PATH)
 
     data = []
 
     for file in history:
-        with open(f'api/history/{file}', "r") as json_file:
+        chat_hist_path = os.path.join(HISTORY_PATH, file)
+
+        with open(chat_hist_path, "r") as json_file:
             existing_data = json.load(json_file) 
 
             prompt_id = file.split('.')[0]
@@ -204,7 +203,9 @@ def sendPromptHistory():
 def loadChatId():
     prompt_id = request.json['id']
 
-    with open(f'api/history/{prompt_id}.json', "r") as json_file:
+    prompt_hist_path = os.path.join(HISTORY_PATH, f'{prompt_id}.json')
+
+    with open(prompt_hist_path, "r") as json_file:
         existing_data = json.load(json_file) 
 
 
@@ -212,7 +213,8 @@ def loadChatId():
         imgs = data['images']
 
         for index, im in enumerate(imgs):
-            image = cv2.imread(f'api/generated/{im}')
+            generated_img_path = os.path.join(GENERATED_PATH, im)
+            image = cv2.imread(generated_img_path)
 
             # Encode image data to Base64 string
             _, buffer = cv2.imencode('.jpg', image)
@@ -232,21 +234,27 @@ def loadChatId():
 def delete_chat():
     chatID = request.json['id']
 
-    history = os.listdir('api/history')
+    history = os.listdir(HISTORY_PATH)
 
     try:
         for file in history:
             if file.split('.')[0] == chatID:
-                with open(f'api/history/{file}', "r") as json_file:
+                path_to_json = os.path.join(HISTORY_PATH, file)
+
+                with open(path_to_json, "r") as json_file:
                     existing_data = json.load(json_file) 
 
                     for _, data in existing_data.items():
                         imgs = data['images']
 
                         for img in imgs:
-                            os.remove(f'./generated/{img}')
+                            path_img_to_del = os.path.join(GENERATED_PATH, img)
+                            os.remove(path_img_to_del)
 
-        os.remove(f'api/history/{chatID}.json')
+        path_to_json = os.path.join(HISTORY_PATH, f"{chatID}.json")
+        os.remove(path_to_json)
+        # os.remove(f'api/history/{chatID}.json')
+
         success = True
     except OSError:
         success = False
