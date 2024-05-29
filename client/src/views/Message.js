@@ -89,15 +89,15 @@ function Message({ id, name, text, images, index, isChatOpened, chat_id, updateP
         })
       }
 
-  return (
-    <div className='message-box'>
-        <div className='message-box-name'>{name}</div>
+return (
+    <div className='message-box' data-testid='message-box'>
+        <div className='message-box-name' data-testid='message-box-name'>{name}</div>
         {
             !mustEdit? (
-                <div className='message-box-text'>{editedText}</div>
+                <div className='message-box-text' data-testid='message-box-text'>{editedText}</div>
             ) : (
-                <div className='edit-box'>
-                    <input type="text" data-testid='edit-box' onChange={handleEdit} value={editedText}/>
+                <div className='edit-box' data-testid='edit-box'>
+                    <input type="text" data-testid='edit-input' onChange={handleEdit} value={editedText}/>
                     <div className='edit-buttons'>
                         <div className='edit-cancel-btn' data-testid='edit-cancel-btn' onClick={handleSend}>cancel</div>
                         <div className='edit-submit-btn' data-testid='edit-submit-btn' onClick={handleSend}>Send</div>
@@ -107,17 +107,17 @@ function Message({ id, name, text, images, index, isChatOpened, chat_id, updateP
         }
         {
             (!images && !mustEdit) && (
-                <div className='message-box-edit'>
+                <div className='message-box-edit' data-testid='message-box-edit'>
                     <FaEdit data-testid='edit-icon' onClick={() => setMustEdit(true)} />
                 </div>
             ) 
         }
-        <div className='images-display'>
+        <div className='images-display' data-testid='images-display'>
             {
                 images !== null && (
-                    <div className='image-list'>
+                    <div className='image-list' data-testid='image-list'>
                         { images.map((imgPath, index) => (
-                           <div key={imgPath}>
+                           <div key={imgPath} data-testid={`image-${index}`}>
                                 <img src={imgPath} alt='Generated Image' onClick={() => downloadImage(imgPath, id)}/>
                            </div> 
                         )) }
@@ -126,7 +126,7 @@ function Message({ id, name, text, images, index, isChatOpened, chat_id, updateP
             }
         </div>
     </div>
-  )
-}
+)
+        }
 
 export default Message

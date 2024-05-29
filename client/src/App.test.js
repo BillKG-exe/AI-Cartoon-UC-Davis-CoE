@@ -8,6 +8,12 @@ import '@testing-library/jest-dom'
 import axios from 'axios';
 import App from './App';
 
+test('App renders without crashing', () => {
+  render(<App />);
+  const appElement = screen.getByTestId('app');
+  expect(appElement).toBeInTheDocument();
+});
+
 test('Can succesfully type in input field', () => {
   render(<App />);
   const input = screen.getByPlaceholderText('Enter your prompt...');
