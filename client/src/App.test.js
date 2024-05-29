@@ -8,7 +8,6 @@ import '@testing-library/jest-dom'
 import axios from 'axios';
 import App from './App';
 
-
 test('Can succesfully type in input field', () => {
   render(<App />);
   const input = screen.getByPlaceholderText('Enter your prompt...');
