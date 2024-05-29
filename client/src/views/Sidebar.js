@@ -37,11 +37,11 @@ function Sidebar({ loadChat, clearChat, newChat }) {
 
     const handleDelete = id => {
         const data = { id: id }
-
         axios.post('http://127.0.0.1:5000/api/deleteChat', data)
             .then(
                 response => {
                     if (response.data.success) {
+                        console.log('Deleting chat with id:', id);
                         setChangeCount(changeCount + 1)
                         clearChat(id)
                     }
@@ -52,7 +52,7 @@ function Sidebar({ loadChat, clearChat, newChat }) {
     }
 
     return (
-        <div className='sidebar'>
+        <div className='sidebar' data-testid="sidebar">
             <div className='sidebar-header'>
                 <div className='sidebar-title'>AI Cartoons</div>
                 <div className='sidebar-new-chat' data-testid='sidebar-new-chat' button role="button" onClick={() => clearChat(null)}>
@@ -66,12 +66,12 @@ function Sidebar({ loadChat, clearChat, newChat }) {
                 {
                     promptHistory.map((hist, index) => (
                         <div key={hist.id} className='history-text'>
-                            <div className='history-prompt' id={hist.id} button role="button" onClick={handleChatLoad}>
+                            <div className='history-prompt' id={hist.id} button role="button" onClick={handleChatLoad} aria-label={`Prompt ${hist.id}`}>
                                 {hist.prompt}
                             </div>
-                            <div className='prompt-del-icon'>
-                                <FaTrashAlt aria-label="delete icon" onClick={() => handleDelete(hist.id)} />
-                            </div>
+                            <button aria-label="delete icon" onClick={() => handleDelete(hist.id)}>
+                                <FaTrashAlt />
+                            </button>
                         </div>
                     ))
                 }
