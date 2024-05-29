@@ -1,6 +1,6 @@
 import React from 'react';
 import './sidebar.css';
-import { FiEdit  } from "react-icons/fi";
+import { FiEdit } from "react-icons/fi";
 import { FaTrashAlt } from "react-icons/fa";
 
 import { useEffect, useState } from 'react';
@@ -13,71 +13,71 @@ function Sidebar({ loadChat, clearChat, newChat }) {
 
     useEffect(() => {
         axios.get('http://127.0.0.1:5000/api/promptHistory')
-        .then(
-            response => {   
-                setPromptHistory(response.data.prompts)     
+            .then(
+                response => {
+                    setPromptHistory(response.data.prompts)
+                })
+            .catch(error => {
+                console.error('Error: ', error);
             })
-        .catch(error => {
-            console.error('Error: ', error);
-        })
     }, [changeCount, newChat])
 
     const handleChatLoad = e => {
         const data = { id: e.target.id }
 
         axios.post('http://127.0.0.1:5000/api/loadChatID', data)
-        .then(
-            response => {   
-                loadChat(e.target.id, response.data)             
+            .then(
+                response => {
+                    loadChat(e.target.id, response.data)
+                })
+            .catch(error => {
+                console.error('Error: ', error);
             })
-        .catch(error => {
-            console.error('Error: ', error);
-        })
     }
 
     const handleDelete = id => {
         const data = { id: id }
-
         axios.post('http://127.0.0.1:5000/api/deleteChat', data)
-        .then(
-            response => {   
-                if(response.data.success) {
-                    setChangeCount(changeCount+1)
-                    clearChat(id)
-                }    
+            .then(
+                response => {
+                    if (response.data.success) {
+                        console.log('Deleting chat with id:', id);
+                        setChangeCount(changeCount + 1)
+                        clearChat(id)
+                    }
+                })
+            .catch(error => {
+                console.error('Error: ', error);
             })
-        .catch(error => {
-            console.error('Error: ', error);
-        })
     }
 
-  return (
-    <div className='sidebar'>
-        <div className='sidebar-header'>
-            <div className='sidebar-title'>AI Cartoons</div>
-            <div className='sidebar-new-chat' data-testid='sidebar-new-chat' onClick={() => clearChat(null)}>
-                <div className='sidebar-new-chat-text'>New Chat</div>
-                <div className='sidebar-new-chat-icon'>
-                    <FiEdit />
+    return (
+        <div className='sidebar' data-testid="sidebar">
+            <div className='sidebar-header'>
+                <div className='sidebar-title'>AI Cartoons</div>
+                <div className='sidebar-new-chat' data-testid='sidebar-new-chat' button role="button" onClick={() => clearChat(null)}>
+                    <div className='sidebar-new-chat-text'>New Chat</div>
+                    <div className='sidebar-new-chat-icon'>
+                        <FiEdit />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div className='side-history'>
-            {
-                promptHistory.map((hist, index) => (
-                    <div key={hist.id} className='history-text'>
-                        <div className='history-prompt' id={hist.id} onClick={handleChatLoad}>
-                            {hist.prompt}
+            <div className='side-history'>
+                {
+                    promptHistory.map((hist, index) => (
+                        <div key={hist.id} className='history-text'>
+                            <div className='history-prompt' id={hist.id} button role="button" onClick={handleChatLoad} aria-label={`Prompt ${hist.id}`}>
+                                {hist.prompt}
+                            </div>
+                            <button aria-label="delete icon" onClick={() => handleDelete(hist.id)}>
+                                <FaTrashAlt />
+                            </button>
                         </div>
-                        <div className='prompt-del-icon'>
-                            <FaTrashAlt  onClick={() => handleDelete(hist.id)}/>
-                        </div>
-                    </div>
-                ))
-            }
+                    ))
+                }
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default Sidebar
