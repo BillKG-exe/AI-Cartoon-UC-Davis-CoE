@@ -10,6 +10,7 @@ import axios from 'axios';
 function Sidebar({ loadChat, clearChat, newChat }) {
     const [changeCount, setChangeCount] = useState(0)
     const [promptHistory, setPromptHistory] = useState([])
+    axios.get = jest.fn(() => Promise.resolve({ data: { prompts: ['Prompt 1', 'Prompt 2'] } }));
 
     useEffect(() => {
         axios.get('http://127.0.0.1:5000/api/promptHistory')

@@ -4,6 +4,7 @@ import Message from './views/Message';
 
 import { useState, useRef } from 'react';
 import axios from 'axios';
+import React from 'react';
 
 import { TbSend2 } from "react-icons/tb";
 

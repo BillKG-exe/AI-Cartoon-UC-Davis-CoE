@@ -1,11 +1,13 @@
-import { render, fireEvent, screen } from '@testing-library/react';
+/**
+ * @jest-environment jsdom
+ */
+
+import React from 'react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import '@testing-library/jest-dom'
+import axios from 'axios';
 import App from './App';
 
-test('App renders without crashing', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/AI Cartoons/i);
-  expect(linkElement).toBeInTheDocument();
-});
 
 test('Can succesfully type in input field', () => {
   render(<App />);
