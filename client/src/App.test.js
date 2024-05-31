@@ -3,15 +3,52 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom'
 import axios from 'axios';
 import App from './App';
 
+
 test('App renders without crashing', () => {
   render(<App />);
-  const appElement = screen.getByTestId('app');
+  const appElement = screen.getByTestId('app-sidebar');
   expect(appElement).toBeInTheDocument();
+});
+
+test('renders Sidebar component', () => {
+  render(<App />);
+  const sidebarElement = screen.getByTestId('sidebar');
+  expect(sidebarElement).toBeInTheDocument();
+});
+
+test('App renders without crashing', () => {
+  render(<App />);
+  const appElement = screen.getByTestId('app-sidebar');
+  expect(appElement).toBeInTheDocument();
+});
+
+test('renders Sidebar component', () => {
+  render(<App />);
+  const sidebarElement = screen.getByTestId('sidebar');
+  expect(sidebarElement).toBeInTheDocument();
+});
+
+test('renders send button', () => {
+  render(<App />);
+  const sendButtonElement = screen.getByTestId('send-button');
+  expect(sendButtonElement).toBeInTheDocument();
+});
+
+test('renders input box', () => {
+  render(<App />);
+  const inputBoxElement = screen.getByTestId('input-box');
+  expect(inputBoxElement).toBeInTheDocument();
+});
+
+test('renders send button', () => {
+  render(<App />);
+  const sendButtonElement = screen.getByTestId('send-button');
+  expect(sendButtonElement).toBeInTheDocument();
 });
 
 test('Can succesfully type in input field', () => {
@@ -54,7 +91,7 @@ test('edit button can be clicked and canceled', async () => {
 
   const editBox = await screen.findByTestId('edit-box');
   expect(editBox).toBeInTheDocument();
-  
+
   const inputField = await screen.findByDisplayValue('Test prompt 1');
   expect(inputField).toBeInTheDocument();
 
@@ -78,7 +115,7 @@ test('edit button can be clicked and text can be edited', async () => {
 
   const editBox = await screen.findByTestId('edit-box');
   expect(editBox).toBeInTheDocument();
-  
+
   const inputField = await screen.findByDisplayValue('Test prompt 1');
   expect(inputField).toBeInTheDocument();
 
@@ -105,3 +142,4 @@ test('can create new chat', async () => {
 
   expect(screen.queryByText('Test prompt 1')).not.toBeInTheDocument();
 });
+

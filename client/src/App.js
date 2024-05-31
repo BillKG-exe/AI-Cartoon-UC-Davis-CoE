@@ -151,13 +151,13 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App" data-testid="app">
       <main>
-        <div className='app-sidebar'>
+        <div className='app-sidebar' data-testid="app-sidebar">
           <Sidebar loadChat={loadChat} clearChat={clearChat} newChat={isChatOpened} />
         </div>
-        <div className='dialog-screen'>
-          <div className='chat-display' id="message-list">
+        <div className='dialog-screen' data-testid="dialog-screen">
+          <div className='chat-display' id="message-list" data-testid="chat-display">
             {
               promptHistory.map((hist, index) => (
                 <div key={`${hist.id}-${index}`}>
@@ -175,9 +175,9 @@ function App() {
               ))
             }
           </div>
-          <div className='input-box'>
+          <div className='input-box' data-testid="input-box">
             <div>
-              <div className='input-div' >
+              <div className='input-div' data-testid="input-div">
                 <textarea 
                   placeholder='Enter your prompt...'
                   onChange={setUserPrompt}
@@ -197,13 +197,3 @@ function App() {
 }
 
 export default App;
-/* <Message 
-              name="Alison" 
-              text="Generate the image of gunrock singing in the open space of the quad" 
-              images={null}
-            />
-            <Message 
-              name="Bot" 
-              text="The following images were generated based on your prompt" 
-              images={["1.jpeg", "2.jpeg", '3.jpeg', '4.jpg', '5.jpg', '6.jpg']}
-            /> */
