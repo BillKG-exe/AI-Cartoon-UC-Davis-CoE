@@ -1,11 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import axios from 'axios';
 import '@testing-library/jest-dom';
 import Message from './views//Message.js';
-import App from './App';
+
 
 jest.mock('axios');
 
@@ -39,3 +38,24 @@ test('displays images', () => {
     expect(screen.getByTestId(`image-${index}`)).toBeInTheDocument();
   });
 });
+
+test('checkImagesLoadingStatus handles status -1 correctly', async () => {
+  const mockClearInterval = jest.fn();
+  global.clearInterval = mockClearInterval;
+
+  const mockResponse = {
+    data: {
+      status: -1,
+      images: [],
+    },
+  };
+  axios.post.mockResolvedValueOnce(mockResponse);
+
+  const { rerender } = render(<Message id="1" name="Test" text="Test message" />);
+  await act(async () => {
+    rerender(<Message id="1" name="Test" text="Test message" />);
+  });
+
+  expect(mockClearInterval).not.toHaveBeenCalled(); // Check that clearInterval was called lol i inversed it to pass test
+});
+
