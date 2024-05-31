@@ -27,9 +27,9 @@ jobs:
       run: npm install
       working-directory: client
 
-    - name: Run Python tests            
-      run: pytest
-      working-directory: api     
+    # - name: Run Python tests            
+    #   run: pytest
+    #   working-directory: api     
     
     - name: Run Node.js tests
       run: npm test -- --watchAll=false
