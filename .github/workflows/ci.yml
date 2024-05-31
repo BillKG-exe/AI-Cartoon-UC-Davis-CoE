@@ -1,0 +1,36 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest #specifying virtual machine. Might try windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7.9'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.16.1'
+
+    - name: Install Python dependencies   #Might need to update the requirements list
+      run: pip install -r requirements.txt 
+
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: client
+
+    - name: Run Python tests               #might change from unittest to pytest
+      run: python -m unittest discover
+      working-directory: api     #need to update with the location of the tests
+    
+    - name: Run Node.js tests
+      run: npm test -- --watchAll=false
+      working-directory: client
