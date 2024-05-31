@@ -59,10 +59,6 @@ function App() {
       })
 
     const dialogScreen = document.querySelector('.dialog-screen');
-    // dialogScreen.scrollTo(0, dialogScreen.scrollHeight);
-
-      //window.scrollTo(0, document.body.scrollHeight)
-      //console.log(document.body.scrollHeight)
 
     setPrompt('');
     setIsChatOpened(true);
