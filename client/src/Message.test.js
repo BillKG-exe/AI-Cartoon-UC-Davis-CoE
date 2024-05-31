@@ -5,43 +5,37 @@ import { act } from 'react-dom/test-utils';
 import axios from 'axios';
 import '@testing-library/jest-dom';
 import Message from './views//Message.js';
+import App from './App';
 
 jest.mock('axios');
 
-test('renders message box', () => {
-    render(<Message id="1" name="Test" text="Test message" />);
-    const messageBox = screen.getByTestId('message-box');
-    expect(messageBox).toBeInTheDocument();
+// Set defaultProps for Message component
+Message.defaultProps = {
+  images: ['api/generated/123.jpg'],
+};
+
+
+test('edits a message', () => {
+  render(<Message id="1" name="Test" text="Test message" />);
+  fireEvent.click(screen.getByTestId('edit-icon'));
+  expect(screen.getByTestId('edit-box')).toBeInTheDocument();
+  fireEvent.change(screen.getByTestId('edit-input'), { target: { value: 'Updated message' } });
+  fireEvent.click(screen.getByTestId('edit-submit-btn'));
+  expect(axios.post).toHaveBeenCalledWith('http://127.0.0.1:5000/api/generate', expect.anything());
+});
+
+test('renders Message component', () => {
+  render(<Message id="1" name="Test" text="Test message" />);
+  expect(screen.getByTestId('message-box')).toBeInTheDocument();
+  expect(screen.getByTestId('message-box-name')).toHaveTextContent('Test');
+  expect(screen.getByTestId('message-box-text')).toHaveTextContent('Test message');
+});
+
+test('displays images', () => {
+  const images = ['image1.jpg', 'image2.jpg'];
+  render(<Message id="1" name="Test" text="Test message" images={images} />);
+  expect(screen.getByTestId('image-list')).toBeInTheDocument();
+  images.forEach((imgPath, index) => {
+    expect(screen.getByTestId(`image-${index}`)).toBeInTheDocument();
   });
-  
-  test('renders message box name', () => {
-    render(<Message id="1" name="Test" text="Test message" />);
-    const messageBoxName = screen.getByTestId('message-box-name');
-    expect(messageBoxName).toBeInTheDocument();
-  });
-  
-  test('renders message box text', () => {
-    render(<Message id="1" name="Test" text="Test message" />);
-    const messageBoxText = screen.getByTestId('message-box-text');
-    expect(messageBoxText).toBeInTheDocument();
-  });
-  
-  test('renders edit box when edit icon is clicked', () => {
-    render(<Message id="1" name="Test" text="Test message" />);
-    const editIcon = screen.getByTestId('edit-icon');
-    fireEvent.click(editIcon);
-    const editBox = screen.getByTestId('edit-box');
-    expect(editBox).toBeInTheDocument();
-  });
-  
-  test('renders images display', () => {
-    render(<Message id="1" name="Test" text="Test message" images={['image1.jpg', 'image2.jpg']} />);
-    const imagesDisplay = screen.getByTestId('images-display');
-    expect(imagesDisplay).toBeInTheDocument();
-  });
-  
-  test('renders image list when images are provided', () => {
-    render(<Message id="1" name="Test" text="Test message" images={['image1.jpg', 'image2.jpg']} />);
-    const imageList = screen.getByTestId('image-list');
-    expect(imageList).toBeInTheDocument();
-  });
+});

@@ -195,21 +195,66 @@ test('can create new chat', async () => {
   expect(screen.queryByText('Test prompt 1')).not.toBeInTheDocument();
 });
 
-describe('axios post request', () => {
-  it('handles error response', async () => {
-    const mockError = new Error('Network error');
-    axios.post.mockRejectedValue(mockError);
+test('handles error for axios post request', async () => {
+  // Force axios.post to reject the promise
+  axios.post.mockRejectedValue(new Error('Network error'));
 
-    // Mock console.error
-    console.error = jest.fn();
+  // Add a mock implementation for axios.get
+  axios.get.mockResolvedValue({ data: { prompts: [] } });
 
-    // setup your component and trigger the axios post request
-    await act(async () => {
-      render(<App />);
-    });
+  // Spy on console.error
+  const consoleSpy = jest.spyOn(console, 'error');
 
-    expect(axios.post).toHaveBeenCalledWith('http://127.0.0.1:5000/api/generate', expect.any(Object));
-    // assert that error was handled
-    expect(console.error).toHaveBeenCalledWith('Error: ', mockError);
+  render(<App />);
+
+  // Wait for console.error to be called
+  await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalledWith('Error: ', new Error('Network error'));
   });
+
+  // Clean up the console spy
+  consoleSpy.mockRestore();
 });
+
+test('handles axios post request in checkImagesLoadingStatus', async () => {
+  // Mock axios.post to resolve with a specific response
+  axios.post.mockResolvedValue({
+    data: {
+      status: 1,
+      images: ['image1.png', 'image2.png']
+    }
+  });
+
+  // Spy on console.log
+  const consoleSpy = jest.spyOn(console, 'log');
+
+  render(<App />);
+
+  // Wait for console.log to be called
+  await waitFor(() => {
+    expect(consoleSpy).toHaveBeenCalledWith('status: ', 1);
+    expect(consoleSpy).toHaveBeenCalledWith('setting prompt history...');
+  });
+
+  // Clean up the console spy
+  consoleSpy.mockRestore();
+});
+
+test('handles error for axios post request in checkImagesLoadingStatus', async () => {
+  // Force axios.post to reject the promise
+  axios.post.mockRejectedValue(new Error('Network error'));
+
+  // Spy on console.error
+  const consoleSpy = jest.spyOn(console, 'error');
+
+  render(<App />);
+
+  // Wait for console.error to be called
+  await waitFor(() => {
+    expect(consoleSpy).toHaveBeenCalledWith('Error: ', new Error('Network error'));
+  });
+
+  // Clean up the console spy
+  consoleSpy.mockRestore();
+});
+
