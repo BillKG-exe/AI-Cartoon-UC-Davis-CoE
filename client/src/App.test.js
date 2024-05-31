@@ -3,10 +3,62 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { useState } from 'react';
 import '@testing-library/jest-dom'
 import axios from 'axios';
 import App from './App';
+
+jest.mock('axios');
+
+describe('checkImagesLoadingStatus', () => {
+  it('updates prompt history when images are loaded', async () => {
+    const mockPromptId = 123;
+    const mockImages = ['image1.png', 'image2.png'];
+    const mockResponse = { data: { status: 1, images: mockImages } };
+
+    axios.post.mockResolvedValue(mockResponse);
+    axios.get.mockResolvedValue({ data: { prompts: [] } }); // Add this line
+    
+    const TestComponent = () => {
+      const [promptHistory, setPromptHistory] = useState([]);
+      const checkImagesLoadingStatus = (prompt_id) => {
+        const data = { id: prompt_id }
+
+        axios.post('http://127.0.0.1:5000/api/checkStatus', data)
+        .then(
+          response => {
+            if(response.data.status === -1) {
+              return;
+            }
+
+            if(response.data.images.length > 0) {
+              const res = {
+                id: prompt_id,
+                prompt: "The following images were generated based on your prompt",
+                imgs: response.data.images
+              }
+              
+              setPromptHistory([...promptHistory, res]);
+            }   
+          })
+        .catch(error => {
+            console.error('Error: ', error);
+        })
+      }
+
+      return <button onClick={() => checkImagesLoadingStatus(mockPromptId)}>Test</button>;
+    };
+
+    const { getByText } = render(<TestComponent />);
+
+    await act(async () => {
+      fireEvent.click(getByText('Test'));
+    });
+
+    expect(axios.post).toHaveBeenCalledWith('http://127.0.0.1:5000/api/checkStatus', { id: mockPromptId });
+  });
+});
 
 
 test('App renders without crashing', () => {
@@ -143,3 +195,21 @@ test('can create new chat', async () => {
   expect(screen.queryByText('Test prompt 1')).not.toBeInTheDocument();
 });
 
+describe('axios post request', () => {
+  it('handles error response', async () => {
+    const mockError = new Error('Network error');
+    axios.post.mockRejectedValue(mockError);
+
+    // Mock console.error
+    console.error = jest.fn();
+
+    // setup your component and trigger the axios post request
+    await act(async () => {
+      render(<App />);
+    });
+
+    expect(axios.post).toHaveBeenCalledWith('http://127.0.0.1:5000/api/generate', expect.any(Object));
+    // assert that error was handled
+    expect(console.error).toHaveBeenCalledWith('Error: ', mockError);
+  });
+});

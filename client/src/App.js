@@ -51,7 +51,6 @@ function App() {
           console.log("Generate: ", response.data)
           
           const interv_id = setInterval(() => checkImagesLoadingStatus(timeId), 1000);
-          //setIntervalId(interv_id);
           intervalIdRef.current = interv_id;
         })
       .catch(error => {
