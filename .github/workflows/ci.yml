@@ -1,0 +1,36 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.16.1'
+
+    - name: Install Python dependencies  
+      run: pip install -r requirements.txt 
+
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: client
+
+    # - name: Run Python tests            
+    #   run: pytest --cov=server test_app.py
+    #   working-directory: api     
+    
+    - name: Run Node.js tests
+      run: npm test -- --watchAll=false
+      working-directory: client
