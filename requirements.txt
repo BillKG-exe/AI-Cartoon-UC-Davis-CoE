@@ -1,11 +1,11 @@
-numpy                              1.24.3
-torch                              2.1.1
-pillow                             10.2.0
-torchvision                        0.16.1
-Flask                              3.0.0
-Flask-Cors                         4.0.0
-opencv-python                      4.9.0.80
-json5                              0.9.25
-pytest                             7.2.0
-pytest-cov                         5.0.0
+numpy==1.24.3
+torch==2.1.1
+pillow==10.2.0
+torchvision==0.16.1
+Flask==3.0.0
+Flask-Cors==4.0.0
+opencv-python==4.9.0.80
+json5==0.9.25
+pytest==7.2.0
+pytest-cov==5.0.0
 git+https://github.com/crowsonkb/glide-text2im
