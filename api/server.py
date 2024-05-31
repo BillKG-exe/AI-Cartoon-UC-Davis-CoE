@@ -61,7 +61,7 @@ def sendImage():
     # Generating the images from glide
     glide_model_path = os.path.join(os.getcwd(), 'glide-finetuned-170.pt')
     
-    batch_size = 6
+    batch_size = 1      
 
     text2im_model = BaseModel(model_path=glide_model_path, batch=batch_size)
 
@@ -84,9 +84,6 @@ def sendImage():
         'chat_id': chat_id,
         'batch_size': batch_size
     }
-
-    # Wait for the thread to end 
-    # process.join()
 
     return jsonify({ 'success': 1, 'status': 'generating the images...' })
 
@@ -148,21 +145,29 @@ def checkImageGenerationStatus():
             json.dump(hist, json_file, indent=4) 
 
 
-    del tasks[pid]
-    del prompt_task_id[f"{str(prompt_id)}"]
+    try:
+        del tasks[pid]
+        del prompt_task_id[f"{str(prompt_id)}"]
+    except:
+        print("No tasks found for pid: ", pid)
+        return jsonify({'status': 0, 'images': []})
 
     # Send the resulting image to the user
     generated_images = []
 
     for i in range(len(imgs)):
         generated_img_path = os.path.join(GENERATED_PATH, imgs[i])
-        image = cv2.imread(generated_img_path)
+        
+        try:
+            image = cv2.imread(generated_img_path)
 
-        # Encode image data to Base64 string
-        _, buffer = cv2.imencode('.jpg', image)
-        image_base64 = base64.b64encode(buffer).decode('utf-8')
+            # Encode image data to Base64 string
+            _, buffer = cv2.imencode('.jpg', image)
+            image_base64 = base64.b64encode(buffer).decode('utf-8')
 
-        generated_images.append(f'data:image/jpeg;base64,{image_base64}')
+            generated_images.append(f'data:image/jpeg;base64,{image_base64}')
+        except:
+            print("Checking validity")
 
     # status: 0 -> done, -1 -> death or does not exist, 1 -> running
     response = {'status': 0, 'images': generated_images}
@@ -214,14 +219,18 @@ def loadChatId():
 
         for index, im in enumerate(imgs):
             generated_img_path = os.path.join(GENERATED_PATH, im)
-            image = cv2.imread(generated_img_path)
+            
+            try:
+                image = cv2.imread(generated_img_path)
 
-            # Encode image data to Base64 string
-            _, buffer = cv2.imencode('.jpg', image)
-            image_base64 = base64.b64encode(buffer).decode('utf-8')
+                # Encode image data to Base64 string
+                _, buffer = cv2.imencode('.jpg', image)
+                image_base64 = base64.b64encode(buffer).decode('utf-8')
 
-            # Update image data in existing_data
-            data['images'][index] = f'data:image/jpeg;base64,{image_base64}'
+                # Update image data in existing_data
+                data['images'][index] = f'data:image/jpeg;base64,{image_base64}'
+            except:
+                return jsonify({ 'status': 'Failed', 'prompts': None })
         
 
     response = {'prompts': existing_data}
@@ -243,7 +252,7 @@ def delete_chat():
 
                 with open(path_to_json, "r") as json_file:
                     existing_data = json.load(json_file) 
-
+                    
                     for _, data in existing_data.items():
                         imgs = data['images']
 
@@ -253,10 +262,9 @@ def delete_chat():
 
         path_to_json = os.path.join(HISTORY_PATH, f"{chatID}.json")
         os.remove(path_to_json)
-        # os.remove(f'api/history/{chatID}.json')
-
         success = True
     except OSError:
+        print("exception here")
         success = False
 
     response = {'success': success}
