@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest #specifying virtual machine. Might try windows-latest
+    runs-on: ubuntu-latest 
 
     steps:
     - name: Checkout repository
@@ -20,16 +20,16 @@ jobs:
       with:
         node-version: '18.16.1'
 
-    - name: Install Python dependencies   #Might need to update the requirements list
+    - name: Install Python dependencies  
       run: pip install -r requirements.txt 
 
     - name: Install Node.js dependencies
       run: npm install
       working-directory: client
 
-    - name: Run Python tests               #might change from unittest to pytest
-      run: python -m unittest discover
-      working-directory: api     #need to update with the location of the tests
+    - name: Run Python tests            
+      run: pytest
+      working-directory: api     
     
     - name: Run Node.js tests
       run: npm test -- --watchAll=false
