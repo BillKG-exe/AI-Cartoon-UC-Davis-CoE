@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: ${{ github.event.workflow_run.head_branch }}
         lfs: true
@@ -23,10 +23,10 @@ jobs:
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
 
+    - name: Create deployment branch
+      run: git checkout -b deployment
+
     - name: Push to deployment branch
       env:
         PAT: ${{ secrets.PAT }}
-      run: |
-        git checkout -b deployment
-        git push https://$PAT@github.com/BillKG-exe/AI-Cartoon-UC-Davis-CoE.git deployment --force
-
+      run: git push https://${{ secrets.PAT }}@github.com/BillKG-exe/AI-Cartoon-UC-Davis-CoE.git deployment --force
