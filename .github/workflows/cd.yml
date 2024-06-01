@@ -16,6 +16,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: ${{ github.event.workflow_run.head_branch }}
+        lfs: true
 
     - name: Set up Git user
       run: |
@@ -23,9 +24,9 @@ jobs:
         git config --global user.email 'github-actions@github.com'
 
     - name: Push to deployment branch
+      env:
+        PAT: ${{ secrets.PAT }}
       run: |
         git checkout -b deployment
-        git push origin deployment --force
-
-
+        git push https://$PAT@github.com/BillKG-exe/AI-Cartoon-UC-Davis-CoE.git deployment --force
 
