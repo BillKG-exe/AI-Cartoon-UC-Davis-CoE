@@ -54,7 +54,7 @@ function Sidebar({ loadChat, clearChat, newChat }) {
     return (
         <div className='sidebar' data-testid="sidebar">
             <div className='sidebar-header'>
-                <div className='sidebar-title'>AI Test Cartoons</div>
+                <div className='sidebar-title'>AI Cartoons</div>
                 <div className='sidebar-new-chat' data-testid='sidebar-new-chat' button role="button" onClick={() => clearChat(null)}>
                     <div className='sidebar-new-chat-text'>New Chat</div>
                     <div className='sidebar-new-chat-icon'>
