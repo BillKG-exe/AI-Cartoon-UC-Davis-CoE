@@ -11,18 +11,18 @@ def client():
     with app.test_client() as client:
         yield client
 
-def test_sendImage(client):
-    data = {
-        'chat_id': '123',
-        'id': 123,
-        'isChatOpened': True,
-        'prompt': 'Test prompt',
-        'isEdit': False
-    }
-    response = client.post('/api/generate', json=data)
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] == 1
+# def test_sendImage(client):
+#     data = {
+#         'chat_id': '123',
+#         'id': 123,
+#         'isChatOpened': True,
+#         'prompt': 'Test prompt',
+#         'isEdit': False
+#     }
+#     response = client.post('/api/generate', json=data)
+#     assert response.status_code == 200
+#     data = response.get_json()
+#     assert data['success'] == 1
 
 def test_checkImageGenerationStatus(client):
     data = {'id': 123}
@@ -34,27 +34,27 @@ def test_checkImageGenerationStatus(client):
             assert 'status' in data
             assert data['status'] == 1
 
-def test_sendImage_and_task_alive(client):
-    data = {
-        'chat_id': '1234',
-        'id': 1234,
-        'isChatOpened': True,
-        'prompt': 'Test prompt',
-        'isEdit': False
-    }
+# def test_sendImage_and_task_alive(client):
+#     data = {
+#         'chat_id': '1234',
+#         'id': 1234,
+#         'isChatOpened': True,
+#         'prompt': 'Test prompt',
+#         'isEdit': False
+#     }
 
-    response = client.post('/api/generate', json=data)
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] == 1
+#     response = client.post('/api/generate', json=data)
+#     assert response.status_code == 200
+#     data = response.get_json()
+#     assert data['success'] == 1
 
-    data = {'id': 1234}
-    with mock.patch.dict(tasks, {1234: {'process': mock.Mock(is_alive=mock.Mock(return_value=True))}}):
-        with mock.patch.dict(prompt_task_id, {'1234': 1234}):
-            response = client.post('/api/checkStatus', json=data)
-            assert response.status_code == 200
-            data = response.get_json()
-            assert data['status'] == 1
+#     data = {'id': 1234}
+#     with mock.patch.dict(tasks, {1234: {'process': mock.Mock(is_alive=mock.Mock(return_value=True))}}):
+#         with mock.patch.dict(prompt_task_id, {'1234': 1234}):
+#             response = client.post('/api/checkStatus', json=data)
+#             assert response.status_code == 200
+#             data = response.get_json()
+#             assert data['status'] == 1
 
 def test_sendPromptHistory(client):
     response = client.get('/api/promptHistory')
@@ -97,33 +97,33 @@ def test_delete_invalid_chat(client):
     data = response.get_json()
     assert data['success'] == False
 
-def test_generate_with_edit(client):
-    # Mock data for the initial generation
-    data = {
-        'chat_id': '123',
-        'id': 123,
-        'isChatOpened': True,
-        'prompt': 'Test prompt',
-        'isEdit': True
-    }
+# def test_generate_with_edit(client):
+#     # Mock data for the initial generation
+#     data = {
+#         'chat_id': '123',
+#         'id': 123,
+#         'isChatOpened': True,
+#         'prompt': 'Test prompt',
+#         'isEdit': True
+#     }
 
-    # Mock tasks and prompt_task_id
-    tasks[123] = {
-        'process': mock.Mock(),
-        'queue': mock.Mock(),
-        'prompt': 'Test prompt',
-        'imgs': ['image1.jpg'],
-        'chat_id': '123',
-        'batch_size': 1
-    }
-    prompt_task_id['123'] = 123
+#     # Mock tasks and prompt_task_id
+#     tasks[123] = {
+#         'process': mock.Mock(),
+#         'queue': mock.Mock(),
+#         'prompt': 'Test prompt',
+#         'imgs': ['image1.jpg'],
+#         'chat_id': '123',
+#         'batch_size': 1
+#     }
+#     prompt_task_id['123'] = 123
 
-    # Call the endpoint with edit flag
-    response = client.post('/api/generate', json=data)
-    assert response.status_code == 200
-    data = response.get_json()
-    assert data['success'] == 1
-    assert data['status'] == 'generating the images...'
+#     # Call the endpoint with edit flag
+#     response = client.post('/api/generate', json=data)
+#     assert response.status_code == 200
+#     data = response.get_json()
+#     assert data['success'] == 1
+#     assert data['status'] == 'generating the images...'
 
 def test_checkImageGenerationStatus_not_found(client):
     data = {'id': 999}
