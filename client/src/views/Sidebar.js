@@ -69,9 +69,9 @@ function Sidebar({ loadChat, clearChat, newChat }) {
                             <div className='history-prompt' id={hist.id} button role="button" onClick={handleChatLoad} aria-label={`Prompt ${hist.id}`}>
                                 {hist.prompt}
                             </div>
-                            <button aria-label="delete icon" onClick={() => handleDelete(hist.id)}>
+                            <div aria-label="delete icon" onClick={() => handleDelete(hist.id)}>
                                 <FaTrashAlt />
-                            </button>
+                            </div>
                         </div>
                     ))
                 }

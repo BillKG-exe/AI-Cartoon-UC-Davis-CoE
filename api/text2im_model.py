@@ -174,26 +174,12 @@ class BaseModel:
             cond_fn=None,
         )[:self.batch_size]
 
-        # self.download_images(samples, './Generated/', img_name)
-        # samples = samples.detach().cpu().numpy()
-        # print("Putting samples into the queue...")
-
         upsampling_path = os.path.join(os.getcwd(), 'glide-finetuned-8.pt')
         upsampler_model = UpSamplerModel(upsampling_path, self.options, self.device, self.has_cuda, self.batch_size)
         upsampler_model.generate(samples=samples, img_name=img_name)
 
         task_result_queue.put('done... ')
-
-        #(samples, self.options, self.device, self.has_cuda)') 
-        # pickle.dump((samples, self.options, self.device, self.has_cuda), task_result_buffer)
-        # task_result_queue.put((samples, self.options, self.device,
-        # self.has_cuda)) 
-        # print(samples.shape)
-        # pickle.dump(samples, task_result_buffer)
-        # pickle.dump(self.options, task_result_buffer)
-        # pickle.dump(self.device, task_result_buffer)
-        # pickle.dump(self.has_cuda, task_result_buffer)
-        print("Samples put into the queue successfully.")
+        print("Done upsampling items...")
 
 
     def download_images(self, batch: th.Tensor, directory: str, name: str):
