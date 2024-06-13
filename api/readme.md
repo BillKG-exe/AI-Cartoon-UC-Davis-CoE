@@ -1,4 +1,4 @@
-# Falsk API
+# Flask API
 Since our models has been developed in python, we decided to go with flask as it
 will allow an ease in data processing and application of the models. The API
 handles different operations for the frontend app.
