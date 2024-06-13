@@ -140,7 +140,3 @@ The main dependencies for this project are:
 - `react-icons`: Library for including icons in your React project.
 
 You can find all the dependencies listed in the `package.json` file. Make sure to run `npm install` to install all the necessary packages.
-
-## Conclusion
-
-This documentation provides an overview of the frontend of the AI Cartoons project. If you have any questions or need further assistance, feel free to open an issue or contact the project maintainer.
