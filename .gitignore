@@ -24,3 +24,4 @@ client/yarn-error.log*
 
 # images
 api/generated/
+api/history/
