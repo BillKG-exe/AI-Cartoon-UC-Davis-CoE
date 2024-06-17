@@ -1,3 +1,3 @@
 @echo off
-python start_script.py
+python script.py
 pause
